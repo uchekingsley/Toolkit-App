@@ -58,7 +58,7 @@ A premium, high-performance Flutter utility application designed with glassmorph
    ```
 
 ## 📱 Mobile Preview
-[Link to Appetize.io Preview] (To be generated for submission)
+[Link to Appetize.io Preview] (https://appetize.io/app/b_mo47v4oon5fb6xgaegftqhxkiu)
 
 ---
 *Developed for HNG14 Stage 1*
