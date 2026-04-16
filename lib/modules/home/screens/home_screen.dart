@@ -9,9 +9,19 @@ import '../../../shared/widgets/dynamic_background.dart';
 import '../../../shared/providers/history_provider.dart';
 import '../../../shared/providers/theme_provider.dart';
 import '../../../shared/widgets/glass_pane.dart';
+import '../../../shared/widgets/command_palette.dart';
+import '../../../shared/services/haptic_service.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning,';
+    if (hour < 17) return 'Good afternoon,';
+    if (hour < 21) return 'Good evening,';
+    return 'Good night,';
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +43,10 @@ class HomeScreen extends ConsumerWidget {
                       Row(
                         children: [
                           GestureDetector(
-                            onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
+                            onTap: () {
+                              HapticService.light();
+                              ref.read(themeProvider.notifier).toggleTheme();
+                            },
                             child: CircleAvatar(
                               backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                               child: Icon(
@@ -42,12 +55,27 @@ class HomeScreen extends ConsumerWidget {
                               ),
                             ).animate().fadeIn().scale(),
                           ),
+                          const SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: () {
+                              HapticService.medium();
+                              CommandPalette.show(context);
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              child: Icon(
+                                LucideIcons.search,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 20,
+                              ),
+                            ).animate().fadeIn().scale(),
+                          ),
                           const SizedBox(width: 16),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Good afternoon,',
+                                _getGreeting(),
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                               Text(

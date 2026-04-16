@@ -8,6 +8,7 @@ import '../modules/more/screens/more_screen.dart';
 import '../modules/currency_converter/screens/currency_screen.dart';
 import '../modules/bmi_calculator/screens/bmi_screen.dart';
 import '../modules/fuel_calculator/screens/fuel_screen.dart';
+import '../modules/task_manager/screens/task_manager_screen.dart';
 
 // app routes
 class AppRoutes {
@@ -19,6 +20,7 @@ class AppRoutes {
   static const String currency = '/currency';
   static const String bmi = '/bmi';
   static const String fuel = '/fuel';
+  static const String tasks = '/tasks';
 
   static Map<String, WidgetBuilder> get routes => {
         home: (context) => const HomeScreen(),
@@ -29,5 +31,6 @@ class AppRoutes {
         currency: (context) => const CurrencyScreen(),
         bmi: (context) => const BMIScreen(),
         fuel: (context) => const FuelScreen(),
+        tasks: (context) => const TaskManagerScreen(),
       };
 }

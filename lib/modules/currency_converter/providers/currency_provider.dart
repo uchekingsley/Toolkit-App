@@ -8,7 +8,9 @@ class CurrencyState {
   final double amount;
   final double result;
   final Map<String, dynamic> rates;
+  final List<double> history;
   final bool isLoading;
+  final bool isHistoryLoading;
   final String? error;
 
   CurrencyState({
@@ -17,7 +19,9 @@ class CurrencyState {
     this.amount = 1.0,
     this.result = 0.0,
     this.rates = const {},
+    this.history = const [],
     this.isLoading = false,
+    this.isHistoryLoading = false,
     this.error,
   });
 
@@ -27,7 +31,9 @@ class CurrencyState {
     double? amount,
     double? result,
     Map<String, dynamic>? rates,
+    List<double>? history,
     bool? isLoading,
+    bool? isHistoryLoading,
     String? error,
   }) {
     return CurrencyState(
@@ -36,7 +42,9 @@ class CurrencyState {
       amount: amount ?? this.amount,
       result: result ?? this.result,
       rates: rates ?? this.rates,
+      history: history ?? this.history,
       isLoading: isLoading ?? this.isLoading,
+      isHistoryLoading: isHistoryLoading ?? this.isHistoryLoading,
       error: error,
     );
   }
@@ -66,7 +74,10 @@ class CurrencyNotifier extends Notifier<CurrencyState> {
     }
 
     // Asyncs fetch outside of build cycle
-    Future.microtask(() => fetchRates());
+    Future.microtask(() {
+      fetchRates();
+      fetchHistory();
+    });
   }
 
   Future<void> fetchRates() async {
@@ -80,6 +91,19 @@ class CurrencyNotifier extends Notifier<CurrencyState> {
     }
   }
 
+  Future<void> fetchHistory() async {
+    state = state.copyWith(isHistoryLoading: true);
+    try {
+      final history = await CurrencyService().getRateHistory(
+        state.fromCurrency,
+        state.toCurrency,
+      );
+      state = state.copyWith(history: history, isHistoryLoading: false);
+    } catch (e) {
+      state = state.copyWith(isHistoryLoading: false);
+    }
+  }
+
   void updateAmount(double amount) {
     state = state.copyWith(amount: amount);
     _calculateResult();
@@ -89,12 +113,14 @@ class CurrencyNotifier extends Notifier<CurrencyState> {
     state = state.copyWith(fromCurrency: currency);
     _prefs.setString(_fromKey, currency);
     fetchRates();
+    fetchHistory();
   }
 
   void updateToCurrency(String currency) {
     state = state.copyWith(toCurrency: currency);
     _prefs.setString(_toKey, currency);
     _calculateResult();
+    fetchHistory();
   }
 
   void swapCurrencies() {
@@ -104,6 +130,7 @@ class CurrencyNotifier extends Notifier<CurrencyState> {
     _prefs.setString(_fromKey, to);
     _prefs.setString(_toKey, from);
     fetchRates();
+    fetchHistory();
   }
 
   void _calculateResult() {

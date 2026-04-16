@@ -4,16 +4,23 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'glass_pane.dart';
 import '../providers/theme_provider.dart';
 
+import 'command_palette.dart';
+import '../services/haptic_service.dart';
+
 class GlassAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
   final bool showBackButton;
+  final bool showSearch;
+  final bool showThemeToggle;
 
   const GlassAppBar({
     super.key,
     required this.title,
     this.actions,
     this.showBackButton = true,
+    this.showSearch = false,
+    this.showThemeToggle = false,
   });
 
   @override
@@ -32,7 +39,10 @@ class GlassAppBar extends ConsumerWidget implements PreferredSizeWidget {
             children: [
               if (showBackButton)
                 IconButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    HapticService.light();
+                    Navigator.pop(context);
+                  },
                   icon: Icon(
                     LucideIcons.chevronLeft,
                     color: Theme.of(context).colorScheme.onSurface,
@@ -49,14 +59,30 @@ class GlassAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       ),
                 ),
               ),
-              IconButton(
-                onPressed: () => ref.read(themeProvider.notifier).toggleTheme(),
-                icon: Icon(
-                  isDark ? LucideIcons.sun : LucideIcons.moon,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.onSurface,
+              if (showSearch)
+                IconButton(
+                  onPressed: () {
+                    HapticService.medium();
+                    CommandPalette.show(context);
+                  },
+                  icon: Icon(
+                    LucideIcons.search,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
-              ),
+              if (showThemeToggle)
+                IconButton(
+                  onPressed: () {
+                    HapticService.light();
+                    ref.read(themeProvider.notifier).toggleTheme();
+                  },
+                  icon: Icon(
+                    isDark ? LucideIcons.sun : LucideIcons.moon,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               if (actions != null) ...actions!,
             ],
           ),

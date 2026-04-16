@@ -9,6 +9,7 @@ import '../../../shared/widgets/animated_input_field.dart';
 import '../../../shared/widgets/dynamic_background.dart';
 import '../../../shared/widgets/glass_app_bar.dart';
 import '../../../shared/providers/history_provider.dart';
+import '../../../shared/styles/app_styles.dart';
 
 class WeightScreen extends ConsumerStatefulWidget {
   const WeightScreen({super.key});
@@ -106,10 +107,9 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                   const SizedBox(height: 12),
                   Text(
                     state.result.toStringAsFixed(4),
-                    style: const TextStyle(
+                    style: AppTextStyles.displayMedium.copyWith(
+                      color: AppColors.secondary,
                       fontSize: 48,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF10B981),
                     ),
                   ).animate().fadeIn().scale(),
                   Text(
@@ -131,7 +131,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(LucideIcons.info, size: 16, color: Color(0xFF10B981)),
+                      const Icon(LucideIcons.info, size: 16, color: AppColors.secondary),
                       const SizedBox(width: 8),
                       Text(
                         'Mass Insights',

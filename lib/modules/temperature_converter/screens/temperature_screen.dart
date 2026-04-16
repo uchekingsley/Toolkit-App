@@ -9,6 +9,7 @@ import '../../../shared/widgets/animated_input_field.dart';
 import '../../../shared/widgets/dynamic_background.dart';
 import '../../../shared/widgets/glass_app_bar.dart';
 import '../../../shared/providers/history_provider.dart';
+import '../../../shared/styles/app_styles.dart';
 
 class TemperatureScreen extends ConsumerStatefulWidget {
   const TemperatureScreen({super.key});
@@ -106,10 +107,9 @@ class _TemperatureScreenState extends ConsumerState<TemperatureScreen> {
                     const SizedBox(height: 12),
                     Text(
                       state.result.toStringAsFixed(2),
-                      style: const TextStyle(
+                      style: AppTextStyles.displayMedium.copyWith(
+                        color: AppColors.accent,
                         fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFF472B6),
                       ),
                     ).animate().fadeIn().scale(),
                     Text(
@@ -131,7 +131,7 @@ class _TemperatureScreenState extends ConsumerState<TemperatureScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(LucideIcons.info, size: 16, color: Color(0xFFF472B6)),
+                        const Icon(LucideIcons.info, size: 16, color: AppColors.accent),
                         const SizedBox(width: 8),
                         Text(
                           'Thermal Insights',

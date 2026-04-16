@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../providers/currency_provider.dart';
 import '../../../shared/widgets/glass_pane.dart';
 import '../../../shared/widgets/animated_input_field.dart';
 import '../../../shared/widgets/dynamic_background.dart';
 import '../../../shared/widgets/glass_app_bar.dart';
 import '../../../shared/providers/history_provider.dart';
+import '../../../shared/services/haptic_service.dart';
 
 class CurrencyScreen extends ConsumerStatefulWidget {
   const CurrencyScreen({super.key});
@@ -71,14 +73,20 @@ class _CurrencyScreenState extends ConsumerState<CurrencyScreen> {
                             value: state.fromCurrency,
                             items: state.rates.keys.toList(),
                             onChanged: (val) {
-                              if (val != null) notifier.updateFromCurrency(val);
+                              if (val != null) {
+                                HapticService.selection();
+                                notifier.updateFromCurrency(val);
+                               }
                             },
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: IconButton(
-                            onPressed: () => notifier.swapCurrencies(),
+                            onPressed: () {
+                              HapticService.medium();
+                              notifier.swapCurrencies();
+                            },
                             icon: Icon(
                               LucideIcons.arrowRightLeft,
                               color: Theme.of(context).colorScheme.primary,
@@ -92,7 +100,10 @@ class _CurrencyScreenState extends ConsumerState<CurrencyScreen> {
                             value: state.toCurrency,
                             items: state.rates.keys.toList(),
                             onChanged: (val) {
-                              if (val != null) notifier.updateToCurrency(val);
+                              if (val != null) {
+                                HapticService.selection();
+                                notifier.updateToCurrency(val);
+                              }
                             },
                           ),
                         ),
@@ -101,6 +112,56 @@ class _CurrencyScreenState extends ConsumerState<CurrencyScreen> {
                   ],
                 ),
               ),
+              const SizedBox(height: 24),
+              if (state.history.isNotEmpty)
+                GlassPane(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            '7D Trend',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            state.fromCurrency == 'USD' && state.toCurrency == 'EUR' ? 'Direct Rate' : 'Estimated',
+                            style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        height: 60,
+                        child: LineChart(
+                          LineChartData(
+                            gridData: const FlGridData(show: false),
+                            titlesData: const FlTitlesData(show: false),
+                            borderData: FlBorderData(show: false),
+                            lineBarsData: [
+                              LineChartBarData(
+                                spots: state.history.asMap().entries.map((e) {
+                                  return FlSpot(e.key.toDouble(), e.value);
+                                }).toList(),
+                                isCurved: true,
+                                color: Theme.of(context).colorScheme.primary,
+                                barWidth: 3,
+                                isStrokeCapRound: true,
+                                dotData: const FlDotData(show: false),
+                                belowBarData: BarAreaData(
+                                  show: true,
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn().slideY(begin: 0.1),
               const SizedBox(height: 32),
               GlassPane(
                 borderRadius: 32,
@@ -117,11 +178,7 @@ class _CurrencyScreenState extends ConsumerState<CurrencyScreen> {
                     else ...[
                       Text(
                         state.result.toStringAsFixed(2),
-                        style: TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                        style: Theme.of(context).textTheme.displayMedium,
                       ).animate().fadeIn().scale(),
                       Text(
                         state.toCurrency,

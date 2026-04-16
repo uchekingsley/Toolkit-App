@@ -9,6 +9,7 @@ import '../../../shared/widgets/animated_input_field.dart';
 import '../../../shared/widgets/dynamic_background.dart';
 import '../../../shared/widgets/glass_app_bar.dart';
 import '../../../shared/providers/history_provider.dart';
+import '../../../shared/styles/app_styles.dart';
 
 class LengthScreen extends ConsumerStatefulWidget {
   const LengthScreen({super.key});
@@ -106,10 +107,9 @@ class _LengthScreenState extends ConsumerState<LengthScreen> {
                     const SizedBox(height: 12),
                     Text(
                       state.result.toStringAsFixed(4),
-                      style: const TextStyle(
+                      style: AppTextStyles.displayMedium.copyWith(
+                        color: AppColors.primary,
                         fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF6366F1),
                       ),
                     ).animate().fadeIn().scale(),
                     Text(
@@ -131,7 +131,7 @@ class _LengthScreenState extends ConsumerState<LengthScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(LucideIcons.info, size: 16, color: Color(0xFF6366F1)),
+                        const Icon(LucideIcons.info, size: 16, color: AppColors.primary),
                         const SizedBox(width: 8),
                         Text(
                           'Unit Insights',

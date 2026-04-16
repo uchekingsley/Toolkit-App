@@ -8,6 +8,7 @@ import '../../../shared/widgets/animated_input_field.dart';
 import '../../../shared/widgets/dynamic_background.dart';
 import '../../../shared/widgets/glass_app_bar.dart';
 import '../../../shared/providers/history_provider.dart';
+import '../../../shared/styles/app_styles.dart';
 
 class FuelScreen extends ConsumerStatefulWidget {
   const FuelScreen({super.key});
@@ -115,7 +116,7 @@ class _FuelScreenState extends ConsumerState<FuelScreen> {
                         value: state.efficiency.toStringAsFixed(1),
                         unit: efficiencyUnit,
                         icon: LucideIcons.gauge,
-                        color: const Color(0xFF6366F1),
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -125,7 +126,7 @@ class _FuelScreenState extends ConsumerState<FuelScreen> {
                         value: state.totalCost.toStringAsFixed(2),
                         unit: 'USD',
                         icon: LucideIcons.banknote,
-                        color: const Color(0xFF10B981),
+                        color: AppColors.secondary,
                       ),
                     ),
                   ],

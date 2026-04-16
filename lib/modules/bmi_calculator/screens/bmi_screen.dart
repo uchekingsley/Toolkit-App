@@ -8,6 +8,7 @@ import '../../../shared/widgets/animated_input_field.dart';
 import '../../../shared/widgets/dynamic_background.dart';
 import '../../../shared/widgets/glass_app_bar.dart';
 import '../../../shared/providers/history_provider.dart';
+import '../../../shared/services/haptic_service.dart';
 
 class BMIScreen extends ConsumerStatefulWidget {
   const BMIScreen({super.key});
@@ -49,108 +50,108 @@ class _BMIScreenState extends ConsumerState<BMIScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
             child: Column(
               children: [
-              GlassPane(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AnimatedInputField(
-                            controller: _heightController,
-                            label: 'Height',
-                            prefixText: '',
-                            onChanged: (val) {
-                              final double? value = double.tryParse(val);
-                              if (value != null) {
-                                notifier.updateHeight(value);
-                                _addHistory(ref, state);
-                              }
+                GlassPane(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AnimatedInputField(
+                              controller: _heightController,
+                              label: 'Height',
+                              prefixText: '',
+                              onChanged: (val) {
+                                final double? value = double.tryParse(val);
+                                if (value != null) {
+                                  notifier.updateHeight(value);
+                                  _addHistory(ref, state);
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          _UnitToggle(
+                            label: state.heightUnit.name.toUpperCase(),
+                            onTap: () {
+                              notifier.toggleHeightUnit();
+                              _heightController.text = ref.read(bmiProvider).height.toStringAsFixed(1);
                             },
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        _UnitToggle(
-                          label: state.heightUnit.name.toUpperCase(),
-                          onTap: () {
-                            notifier.toggleHeightUnit();
-                            _heightController.text = ref.read(bmiProvider).height.toStringAsFixed(1);
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AnimatedInputField(
-                            controller: _weightController,
-                            label: 'Weight',
-                            prefixText: '',
-                            onChanged: (val) {
-                              final double? value = double.tryParse(val);
-                              if (value != null) {
-                                notifier.updateWeight(value);
-                                _addHistory(ref, state);
-                              }
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AnimatedInputField(
+                              controller: _weightController,
+                              label: 'Weight',
+                              prefixText: '',
+                              onChanged: (val) {
+                                final double? value = double.tryParse(val);
+                                if (value != null) {
+                                  notifier.updateWeight(value);
+                                  _addHistory(ref, state);
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          _UnitToggle(
+                            label: state.weightUnit.name.toUpperCase(),
+                            onTap: () {
+                              notifier.toggleWeightUnit();
+                              _weightController.text = ref.read(bmiProvider).weight.toStringAsFixed(1);
                             },
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        _UnitToggle(
-                          label: state.weightUnit.name.toUpperCase(),
-                          onTap: () {
-                            notifier.toggleWeightUnit();
-                            _weightController.text = ref.read(bmiProvider).weight.toStringAsFixed(1);
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              GlassPane(
-                borderRadius: 32,
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  children: [
-                    Text(
-                      'Your BMI',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      state.bmi.toStringAsFixed(1),
-                      style: TextStyle(
-                        fontSize: 64,
-                        fontWeight: FontWeight.bold,
-                        color: _getCategoryColor(state.category),
+                const SizedBox(height: 32),
+                GlassPane(
+                  borderRadius: 32,
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Your BMI',
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                    ).animate().fadeIn().scale(),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: _getCategoryColor(state.category).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: _getCategoryColor(state.category).withOpacity(0.3),
-                        ),
-                      ),
-                      child: Text(
-                        state.category.toUpperCase(),
+                      const SizedBox(height: 12),
+                      Text(
+                        state.bmi.toStringAsFixed(1),
                         style: TextStyle(
-                          letterSpacing: 1.5,
+                          fontSize: 64,
                           fontWeight: FontWeight.bold,
                           color: _getCategoryColor(state.category),
-                          fontSize: 14,
                         ),
-                      ),
-                    ).animate().fadeIn(delay: 200.ms),
-                  ],
+                      ).animate().fadeIn().scale(),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _getCategoryColor(state.category).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: _getCategoryColor(state.category).withOpacity(0.3),
+                          ),
+                        ),
+                        child: Text(
+                          state.category.toUpperCase(),
+                          style: TextStyle(
+                            letterSpacing: 1.5,
+                            fontWeight: FontWeight.bold,
+                            color: _getCategoryColor(state.category),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ).animate().fadeIn(delay: 200.ms),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
+                const SizedBox(height: 32),
               GlassPane(
                 borderRadius: 24,
                 child: Column(
